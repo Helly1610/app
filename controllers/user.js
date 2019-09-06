@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 //for user reistration 
 exports.user_registration = function(req, res) {
-    Student.findOne({ email: req.body.email }, function(err, data) {
+    User.findOne({ email: req.body.email }, function(err, data) {
         if (err) {
             console.log("error with the query");
         }
@@ -22,7 +22,6 @@ exports.user_registration = function(req, res) {
         const user_obj = new User({
             name: req.body.name,
             email: req.body.email,
-            enrolment: req.body.enrolment,
             phone_number: req.body.phone_number,
             password: encrypted_password
         });
@@ -32,4 +31,19 @@ exports.user_registration = function(req, res) {
             res.send(req.body.name + " has been added to the database");
         });
     }
+};
+
+//user login 
+exports.user_login = function(req, res) {
+    User.findOne({ email: req.body.email }, function(err, data) {
+        if (data) {
+            if (bcrypt.compareSync(req.body.password, data.password)) {
+                res.send("Logged In");
+            } else {
+                res.send("Please enter correct password");
+            }
+        } else {
+            res.send("There is no user with this email");
+        }
+    });
 };
