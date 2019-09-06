@@ -1,13 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const router = require("./router/student.router");
+const router = require("./routers/route");
 var mongoose = require("mongoose");
 require("dotenv").config();
 
-const sgMail = require("@sendgrid/mail");
 
 const app = express();
-mongoose.connect("mongodb://localhost:27017/Student_APP", {
+mongoose.connect("mongodb://localhost:27017/App", {
     useNewUrlParser: true
 });
 
