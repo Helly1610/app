@@ -13,7 +13,6 @@ mongoose.connect("mongodb://localhost:27017/App", {
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection time error"));
 
-let port = 5000;
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
@@ -31,6 +30,6 @@ app.use(function(req, res, next) {
 });
 app.use("/", router);
 
-app.listen(port, () => {
-    console.log("server is running at ", port);
+app.listen(process.env.PORT, () => {
+    console.log("server is running at ", process.env.PORT);
 });

@@ -1,5 +1,9 @@
 var User = require('../models/user.model');
-const bcrypt = require("bcrypt");
+var Token = require('../middleware/token');
+var msg = require('../middleware/response');
+var bcrypt = require("bcrypt");
+
+
 
 //for user reistration 
 exports.user_registration = function(req, res) {
@@ -34,16 +38,28 @@ exports.user_registration = function(req, res) {
 };
 
 //user login 
-exports.user_login = function(req, res) {
-    User.findOne({ email: req.body.email }, function(err, data) {
-        if (data) {
-            if (bcrypt.compareSync(req.body.password, data.password)) {
-                res.send("Logged In");
-            } else {
-                res.send("Please enter correct password");
+exports.user_login =  function(req, res) {
+    if(!req.body.email && !req.body.password ) {
+        return res.send(msg( null , true, "please enter credentials"));
+    }
+  
+    var email = req.body.email;
+    var password = req.body.password;
+
+    User.findOne({email:email}).then(async function(data,err){
+        if(data){
+            var tokendata = await Token.token(email);
+            const match = await bcrypt.compare(password, data.password);
+            if(match){
+                return res.send(msg(tokendata , false , "logged in"));
             }
-        } else {
-            res.send("There is no user with this email");
+               else {
+                 return res.send(msg(err, true, "somethig went wrong" ));
+               }
+            }
+        
+        else {
+            return res.send(msg(err , true , "data not found"))
         }
-    });
+     })
 };
